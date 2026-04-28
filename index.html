@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Cuentas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
+    #login-screen {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; padding: 24px;
+    }
+    .login-box {
+      background: #111827; border-radius: 20px; padding: 40px 28px;
+      width: 100%; max-width: 340px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .login-box h1 { color: #fff; font-size: 22px; margin-bottom: 6px; }
+    .login-box p { color: #9ca3af; font-size: 13px; margin-bottom: 24px; }
+    .login-box input {
+      width: 100%; padding: 12px 16px; border-radius: 10px; border: 2px solid #374151;
+      background: #1f2937; color: #fff; font-size: 16px; margin-bottom: 14px; outline: none;
+      text-align: center; letter-spacing: 4px;
+    }
+    .login-box input:focus { border-color: #1a56db; }
+    .login-box button {
+      width: 100%; padding: 13px; background: #1a56db; color: #fff;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+    .login-box button:active { background: #1e40af; }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 8px; }
+    #app { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- Pantalla de login -->
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:48px; margin-bottom:12px;">💼</div>
+    <h1>Mis Cuentas</h1>
+    <p>Ingresa tu contraseña para continuar</p>
+    <input type="password" id="pwd-input" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter') checkPassword()" />
+    <button onclick="checkPassword()">🔓 Entrar</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+</div>
+
+<!-- App principal -->
+<div id="app"></div>
+
+<script>
+  // ── CONTRASEÑA ────────────────────────────────────────────────────────────
+  const PASSWORD = "zoila2026"; // Cámbiala por la que quieras
+
+  function checkPassword() {
+    const val = document.getElementById('pwd-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadApp();
+    } else {
+      document.getElementById('error-msg').textContent = '❌ Contraseña incorrecta';
+      document.getElementById('pwd-input').value = '';
+    }
+  }
+
+  function loadApp() {
+    // Carga el script principal de React
+    const s = document.createElement('script');
+    s.src = 'app.js';
+    document.body.appendChild(s);
+  }
+</script>
+</body>
+</html>
