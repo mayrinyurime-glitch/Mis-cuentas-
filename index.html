@@ -1,67 +1,503 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mis Cuentas</title>
+  <title>💼 Mis Cuentas</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; }
-    #login-screen {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; min-height: 100vh; padding: 24px;
-    }
-    .login-box {
-      background: #111827; border-radius: 20px; padding: 40px 28px;
-      width: 100%; max-width: 340px; text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-    .login-box h1 { color: #fff; font-size: 22px; margin-bottom: 6px; }
-    .login-box p  { color: #9ca3af; font-size: 13px; margin-bottom: 24px; }
-    .login-box input {
-      width: 100%; padding: 12px 16px; border-radius: 10px;
-      border: 2px solid #374151; background: #1f2937; color: #fff;
-      font-size: 16px; margin-bottom: 14px; outline: none;
-      text-align: center; letter-spacing: 4px;
-    }
-    .login-box input:focus { border-color: #1a56db; }
-    .login-box button {
-      width: 100%; padding: 13px; background: #1a56db; color: #fff;
-      border: none; border-radius: 10px; font-size: 16px;
-      font-weight: 700; cursor: pointer;
-    }
-    .error-msg { color: #f87171; font-size: 13px; margin-top: 8px; }
-    #root { display: none; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#f3f4f6;min-height:100vh}
+    #login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+    .login-box{background:#111827;border-radius:20px;padding:40px 28px;width:100%;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+    .login-box h1{color:#fff;font-size:22px;margin-bottom:6px}
+    .login-box p{color:#9ca3af;font-size:13px;margin-bottom:24px}
+    .login-box input{width:100%;padding:12px 16px;border-radius:10px;border:2px solid #374151;background:#1f2937;color:#fff;font-size:16px;margin-bottom:14px;outline:none;text-align:center;letter-spacing:4px}
+    .login-box input:focus{border-color:#1a56db}
+    .login-box button{width:100%;padding:13px;background:#1a56db;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+    .error-msg{color:#f87171;font-size:13px;margin-top:8px}
+    #root{display:none}
   </style>
 </head>
 <body>
-  <div id="login-screen">
-    <div class="login-box">
-      <div style="font-size:48px;margin-bottom:12px">💼</div>
-      <h1>Mis Cuentas</h1>
-      <p>Ingresa tu contraseña para continuar</p>
-      <input type="password" id="pwd-input" placeholder="••••••••" maxlength="20"
-        onkeydown="if(event.key==='Enter')checkPassword()"/>
-      <button onclick="checkPassword()">🔓 Entrar</button>
-      <div class="error-msg" id="error-msg"></div>
-    </div>
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:48px;margin-bottom:12px">💼</div>
+    <h1>Mis Cuentas</h1>
+    <p>Ingresa tu contraseña para continuar</p>
+    <input type="password" id="pwd-input" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPassword()"/>
+    <button onclick="checkPassword()">🔓 Entrar</button>
+    <div class="error-msg" id="error-msg"></div>
   </div>
+</div>
+<div id="root"></div>
 
-  <div id="root"></div>
-
-  <script>
-    const PASSWORD = "zoila2026";
-    function checkPassword() {
-      const val = document.getElementById('pwd-input').value;
-      if (val === PASSWORD) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('root').style.display = 'block';
-      } else {
-        document.getElementById('error-msg').textContent = '❌ Contraseña incorrecta';
-        document.getElementById('pwd-input').value = '';
-      }
+<script>
+  const PASSWORD = "zoila2026";
+  function checkPassword(){
+    const val=document.getElementById('pwd-input').value;
+    if(val===PASSWORD){
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('root').style.display='block';
+    } else {
+      document.getElementById('error-msg').textContent='❌ Contraseña incorrecta';
+      document.getElementById('pwd-input').value='';
     }
-  </script>
-  <script type="module" src="/src/main.jsx"></script>
+  }
+</script>
+
+<script type="text/babel">
+const {useState,useCallback} = React;
+
+const BANKS=[
+  {id:1,name:"C. Rosa",color:"#1a56db",icon:"🏦"},
+  {id:2,name:"Azt. Rolanda",color:"#0e9f6e",icon:"💳"},
+  {id:3,name:"Mercado Rolanda",color:"#e3a008",icon:"🏛️"},
+  {id:4,name:"Azt. Zoila",color:"#e02424",icon:"💰"},
+  {id:5,name:"Bbva Zoila",color:"#7e3af2",icon:"🪙"},
+  {id:6,name:"Coppel Zoila",color:"#ff5a1f",icon:"💵"},
+  {id:7,name:"Compartamos",color:"#057a55",icon:"🏧"},
+  {id:8,name:"C. Negra",color:"#1c64f2",icon:"💲"},
+  {id:9,name:"Azt Ogilbier",color:"#be185d",icon:"🏪"},
+  {id:10,name:"Banco 10",color:"#b45309",icon:"💎"},
+  {id:11,name:"Banco 11",color:"#0891b2",icon:"🏅"},
+  {id:12,name:"Banco 12",color:"#4d7c0f",icon:"🪙"},
+  {id:13,name:"Comisiones",color:"#9333ea",icon:"🏴"},
+  {id:14,name:"Banco 14",color:"#0f766e",icon:"💹"},
+  {id:15,name:"Banco 15",color:"#c2410c",icon:"🏆"},
+];
+
+const STORAGE_KEY="mis_cuentas_data";
+const initAccounts=()=>BANKS.map(b=>({...b,balance:0,transactions:[]}));
+const fmt=n=>n.toLocaleString("es-MX",{style:"currency",currency:"MXN"});
+const todayStr=()=>new Date().toISOString().split("T")[0];
+
+const exportToExcel=(accounts,activities)=>{
+  const wb=XLSX.utils.book_new();
+  const actData=[["Fecha","Tipo","Descripción","Monto","Comisión","Cuenta Origen","Cuenta Destino","Nota"]];
+  activities.forEach(a=>actData.push([a.date,a.type==="deposito"?"Depósito":a.type==="retiro"?"Retiro":"Transferencia",a.description,a.amount,a.commission||0,a.fromBank!=null?accounts[a.fromBank]?.name:"",a.toBank!=null?accounts[a.toBank]?.name:"",a.note||""]));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(actData),"Actividades");
+  const saldos=[["Cuenta","Saldo"]];
+  accounts.forEach(a=>saldos.push([a.name,a.balance]));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(saldos),"Saldos");
+  const wbout=XLSX.write(wb,{bookType:"xlsx",type:"base64"});
+  const link=document.createElement("a");
+  link.href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"+wbout;
+  link.download=`MisCuentas_${todayStr()}.xlsx`;
+  document.body.appendChild(link);link.click();document.body.removeChild(link);
+};
+
+function App(){
+  const [accounts,setAccounts]=useState(()=>{try{const d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d).accounts:initAccounts();}catch{return initAccounts();}});
+  const [activities,setActivities]=useState(()=>{try{const d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d).activities:[];}catch{return [];}});
+  const [selected,setSelected]=useState(null);
+  const [form,setForm]=useState({type:"deposito",amount:"",note:""});
+  const [view,setView]=useState("dashboard");
+  const [editNames,setEditNames]=useState(BANKS.map(b=>b.name));
+  const [msg,setMsg]=useState(null);
+  const [actForm,setActForm]=useState({description:"",type:"deposito",amount:"",toBank:"",fromBank:"",date:todayStr(),note:"",commission:""});
+  const [filterDate,setFilterDate]=useState(todayStr());
+  const [selYear,setSelYear]=useState(new Date().getFullYear());
+  const [selMonth,setSelMonth]=useState(new Date().getMonth());
+  const [receipt,setReceipt]=useState(null);
+  const [saveStatus,setSaveStatus]=useState("");
+
+  const showMsg=(text,type="ok")=>{setMsg({text,type});setTimeout(()=>setMsg(null),3000);};
+
+  const save=useCallback((acc,act)=>{
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify({accounts:acc,activities:act}));setSaveStatus("✅ Guardado");setTimeout(()=>setSaveStatus(""),2000);}
+    catch{setSaveStatus("❌ Error");}
+  },[]);
+
+  const totalBalance=accounts.reduce((s,a)=>s+a.balance,0);
+  const typeColor={deposito:"#0e9f6e",retiro:"#e02424",transferencia:"#7e3af2"};
+  const typeIcon={deposito:"⬆",retiro:"⬇",transferencia:"↔"};
+  const typeLabel={deposito:"Depósito",retiro:"Retiro",transferencia:"Transferencia"};
+  const filteredActivities=activities.filter(a=>!filterDate||a.date===filterDate);
+
+  const handleTransaction=()=>{
+    const amount=parseFloat(form.amount);
+    if(!amount||amount<=0)return showMsg("Ingresa un monto válido.","err");
+    if(form.type==="retiro"&&amount>accounts[selected].balance)return showMsg("Saldo insuficiente.","err");
+    setAccounts(prev=>{
+      const next=prev.map((acc,i)=>{if(i!==selected)return acc;const nb=form.type==="deposito"?acc.balance+amount:acc.balance-amount;return{...acc,balance:nb,transactions:[{id:Date.now(),type:form.type,amount,note:form.note||"",date:new Date().toLocaleString("es-MX"),balanceAfter:nb},...acc.transactions]};});
+      save(next,activities);return next;
+    });
+    setForm({type:"deposito",amount:"",note:""});
+    showMsg(`${form.type==="deposito"?"Depósito":"Retiro"} registrado ✓`);
+  };
+
+  const handleActivity=()=>{
+    const amount=parseFloat(actForm.amount);
+    if(!actForm.description.trim())return showMsg("Escribe una descripción.","err");
+    if(!amount||amount<=0)return showMsg("Ingresa un monto válido.","err");
+    const toIdx=actForm.toBank!==""?parseInt(actForm.toBank):-1;
+    const fromIdx=actForm.fromBank!==""?parseInt(actForm.fromBank):-1;
+    if(actForm.type==="deposito"&&toIdx<0)return showMsg("Selecciona cuenta destino.","err");
+    if(actForm.type==="retiro"){if(fromIdx<0)return showMsg("Selecciona cuenta origen.","err");if(amount>accounts[fromIdx].balance)return showMsg("Saldo insuficiente.","err");}
+    if(actForm.type==="transferencia"){if(fromIdx<0)return showMsg("Selecciona cuenta origen.","err");if(toIdx<0)return showMsg("Selecciona cuenta destino.","err");if(fromIdx===toIdx)return showMsg("Las cuentas deben ser diferentes.","err");if(amount>accounts[fromIdx].balance)return showMsg("Saldo insuficiente.","err");}
+    const commission=actForm.type==="transferencia"?parseFloat(actForm.commission)||0:0;
+    const CIDX=12;const now=new Date().toLocaleString("es-MX");const actId=Date.now();
+    setAccounts(prev=>{
+      const next=prev.map((acc,i)=>{
+        if(actForm.type==="deposito"){if(i!==toIdx)return acc;const nb=acc.balance+amount;return{...acc,balance:nb,transactions:[{id:actId,type:"deposito",amount,note:actForm.description,date:now,balanceAfter:nb,activityId:actId},...acc.transactions]};}
+        else if(actForm.type==="retiro"){if(i!==fromIdx)return acc;const nb=acc.balance-amount;return{...acc,balance:nb,transactions:[{id:actId,type:"retiro",amount,note:actForm.description,date:now,balanceAfter:nb,activityId:actId},...acc.transactions]};}
+        else{
+          if(i===fromIdx){const nb=acc.balance-amount;return{...acc,balance:nb,transactions:[{id:actId,type:"retiro",amount,note:`Transferencia → ${prev[toIdx].name}: ${actForm.description}`,date:now,balanceAfter:nb,activityId:actId},...acc.transactions]};}
+          if(i===toIdx){const nb=acc.balance+amount;return{...acc,balance:nb,transactions:[{id:actId,type:"deposito",amount,note:`Transferencia ← ${prev[fromIdx].name}: ${actForm.description}`,date:now,balanceAfter:nb,activityId:actId},...acc.transactions]};}
+          if(commission>0&&i===CIDX){const nb=acc.balance+commission;return{...acc,balance:nb,transactions:[{id:actId,type:"deposito",amount:commission,note:`💰 Comisión: ${actForm.description}`,date:now,balanceAfter:nb,activityId:actId},...acc.transactions]};}
+          return acc;
+        }
+      });
+      setActivities(prev2=>{const next2=[{id:actId,description:actForm.description,type:actForm.type,amount,commission,toBank:(actForm.type==="deposito"||actForm.type==="transferencia")?toIdx:null,fromBank:(actForm.type==="retiro"||actForm.type==="transferencia")?fromIdx:null,date:actForm.date,note:actForm.note,createdAt:now},...prev2];save(next,next2);return next2;});
+      return next;
+    });
+    setActForm({description:"",type:actForm.type,amount:"",toBank:"",fromBank:"",date:todayStr(),note:"",commission:""});
+    showMsg("Actividad registrada ✓");
+  };
+
+  const deleteActivity=actId=>{
+    setAccounts(prev=>{
+      const next=prev.map(acc=>{const tx=acc.transactions.find(t=>t.activityId===actId);if(!tx)return acc;const d=tx.type==="deposito"?-tx.amount:tx.amount;return{...acc,balance:acc.balance+d,transactions:acc.transactions.filter(t=>t.activityId!==actId)};});
+      setActivities(prev2=>{const next2=prev2.filter(a=>a.id!==actId);save(next,next2);return next2;});
+      return next;
+    });
+    showMsg("Actividad eliminada.","err");
+  };
+
+  const deleteTransaction=(bankIdx,txId)=>{
+    setAccounts(prev=>{
+      const next=prev.map((acc,i)=>{if(i!==bankIdx)return acc;const tx=acc.transactions.find(t=>t.id===txId);if(!tx)return acc;const d=tx.type==="deposito"?-tx.amount:tx.amount;return{...acc,balance:acc.balance+d,transactions:acc.transactions.filter(t=>t.id!==txId)};});
+      save(next,activities);return next;
+    });
+    showMsg("Transacción eliminada.","err");
+  };
+
+  const saveNames=()=>{
+    setAccounts(prev=>{const next=prev.map((acc,i)=>({...acc,name:editNames[i]||acc.name}));save(next,activities);return next;});
+    showMsg("Nombres guardados ✓");setView("dashboard");
+  };
+
+  const printReceipt=act=>setReceipt({act,typeEs:act.type==="deposito"?"Depósito":act.type==="retiro"?"Retiro":"Transferencia",folio:String(act.id).slice(-8).toUpperCase()});
+
+  if(receipt){
+    const{act,typeEs,folio}=receipt;
+    const col=act.type==="deposito"?"#0e9f6e":act.type==="retiro"?"#e02424":"#7e3af2";
+    const ico=act.type==="deposito"?"⬆":act.type==="retiro"?"⬇":"↔";
+    return(
+      <div style={{minHeight:"100vh",background:"#f3f4f6",display:"flex",flexDirection:"column",alignItems:"center",padding:"24px 16px"}}>
+        <div style={{width:"100%",maxWidth:420,background:"#fff",borderRadius:16,overflow:"hidden",boxShadow:"0 4px 24px rgba(0,0,0,0.12)"}}>
+          <div style={{background:col,color:"#fff",padding:"28px 24px 20px",textAlign:"center"}}>
+            <div style={{fontSize:38,marginBottom:8}}>{ico}</div>
+            <div style={{fontSize:20,fontWeight:800}}>Comprobante de {typeEs}</div>
+            <div style={{fontSize:13,opacity:.85,marginTop:4}}>{act.createdAt}</div>
+          </div>
+          <div style={{padding:24}}>
+            <div style={{background:"#f9fafb",borderRadius:12,padding:18,textAlign:"center",marginBottom:20,border:`2px solid ${col}33`}}>
+              <div style={{fontSize:11,color:"#6b7280",textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Monto</div>
+              <div style={{fontSize:32,fontWeight:900,color:col}}>{fmt(act.amount)}</div>
+            </div>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              {[["Operación",typeEs],["Descripción",act.description],act.commission>0?["Comisión",fmt(act.commission)]:null,["Fecha",act.date],["Registrado",act.createdAt],act.note?["Nota",act.note]:null].filter(Boolean).map(([k,v],i)=>(
+                <tr key={i} style={{borderBottom:"1px solid #f3f4f6"}}>
+                  <td style={{padding:"9px 4px",fontSize:13,color:"#6b7280",width:"42%"}}>{k}</td>
+                  <td style={{padding:"9px 4px",fontSize:13,fontWeight:600,color:"#111827",textAlign:"right"}}>{v}</td>
+                </tr>
+              ))}
+            </table>
+            <div style={{fontSize:12,color:"#9ca3af",letterSpacing:1,marginTop:14,textAlign:"center"}}>Folio: {folio}</div>
+          </div>
+          <div style={{background:"#f9fafb",borderTop:"1px solid #e5e7eb",padding:"14px 24px",display:"flex",flexDirection:"column",gap:8}}>
+            <button onClick={()=>{const t=`💼 *Comprobante de ${typeEs}*\n📋 Folio: ${folio}\n💰 Monto: ${fmt(act.amount)}\n📝 ${act.description}\n📆 ${act.date}`;window.open(`https://wa.me/?text=${encodeURIComponent(t)}`,"_blank");}} style={{background:"#25d366",color:"#fff",border:"none",borderRadius:8,padding:"10px",fontSize:14,fontWeight:700,cursor:"pointer"}}>📲 Compartir por WhatsApp</button>
+            <button onClick={()=>setReceipt(null)} style={{background:"#374151",color:"#fff",border:"none",borderRadius:8,padding:"12px",fontSize:15,fontWeight:700,cursor:"pointer",width:"100%"}}>← Regresar</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const S={
+    root:{minHeight:"100vh",background:"#f3f4f6",color:"#111827"},
+    topbar:{background:"#111827",color:"#fff",padding:"0 14px",height:54,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100},
+    logo:{fontWeight:700,fontSize:15,whiteSpace:"nowrap"},
+    navBtns:{display:"flex",gap:5},
+    navBtn:{background:"transparent",border:"1px solid #374151",color:"#d1d5db",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:12},
+    navActive:{background:"#1a56db",border:"1px solid #1a56db",color:"#fff",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:12,fontWeight:700},
+    toast:{position:"fixed",top:62,left:"50%",transform:"translateX(-50%)",color:"#fff",padding:"9px 22px",borderRadius:8,fontWeight:600,fontSize:13,zIndex:999,boxShadow:"0 4px 12px rgba(0,0,0,0.2)",whiteSpace:"nowrap"},
+    content:{maxWidth:860,margin:"0 auto",padding:"18px 13px 60px"},
+    totalCard:{background:"#111827",color:"#fff",borderRadius:16,padding:"20px 22px",marginBottom:18,textAlign:"center"},
+    totalLabel:{fontSize:11,color:"#9ca3af",marginBottom:4,textTransform:"uppercase",letterSpacing:1},
+    totalAmount:{fontSize:34,fontWeight:800},
+    grid:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:11},
+    card:{background:"#fff",borderRadius:13,padding:"14px 13px",boxShadow:"0 1px 5px rgba(0,0,0,0.07)",display:"flex",flexDirection:"column",gap:5},
+    cardName:{fontWeight:700,fontSize:13,color:"#374151"},
+    cardBalance:{fontSize:18,fontWeight:800},
+    cardTxCount:{fontSize:11,color:"#9ca3af"},
+    backBtn:{background:"none",border:"none",color:"#1a56db",fontWeight:600,cursor:"pointer",fontSize:13,marginBottom:13,padding:0},
+    detailHeader:{display:"flex",alignItems:"center",gap:13,background:"#fff",borderRadius:13,padding:"15px 17px",marginBottom:16,boxShadow:"0 1px 5px rgba(0,0,0,0.07)"},
+    detailName:{fontWeight:700,fontSize:16},
+    detailBalance:{fontSize:24,fontWeight:800},
+    formBox:{background:"#fff",borderRadius:13,padding:"16px",marginBottom:16,boxShadow:"0 1px 5px rgba(0,0,0,0.07)",display:"flex",flexDirection:"column",gap:10},
+    typeRow:{display:"flex",gap:8},
+    typeBtn:{flex:1,border:"none",borderRadius:8,padding:"9px 4px",fontWeight:700,cursor:"pointer"},
+    input:{border:"1.5px solid #e5e7eb",borderRadius:8,padding:"8px 11px",fontSize:14,outline:"none",width:"100%",boxSizing:"border-box",background:"#fff"},
+    select:{border:"1.5px solid #e5e7eb",borderRadius:8,padding:"8px 11px",fontSize:14,outline:"none",width:"100%",boxSizing:"border-box",background:"#fff",cursor:"pointer"},
+    label:{fontSize:12,fontWeight:600,color:"#6b7280",display:"block",marginBottom:4},
+    submitBtn:{color:"#fff",border:"none",borderRadius:8,padding:"11px",fontWeight:700,fontSize:14,cursor:"pointer"},
+    txList:{background:"#fff",borderRadius:13,padding:"15px 16px",boxShadow:"0 1px 5px rgba(0,0,0,0.07)"},
+    txTitle:{fontWeight:700,fontSize:14,marginBottom:11,color:"#374151"},
+    emptyTx:{textAlign:"center",color:"#9ca3af",padding:"16px 0",fontSize:14},
+    txRow:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"10px 0",borderBottom:"1px solid #f3f4f6"},
+    txLeft:{display:"flex",gap:8,alignItems:"flex-start"},
+    txNote:{fontSize:12,color:"#6b7280",marginTop:2},
+    txDate:{fontSize:11,color:"#9ca3af",marginTop:2},
+    txRight:{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:5},
+    delBtn:{background:"none",border:"none",cursor:"pointer",fontSize:15,opacity:0.5},
+    printBtn:{background:"#1e3a5f",color:"#fff",border:"none",borderRadius:6,padding:"5px 10px",fontSize:11,fontWeight:700,cursor:"pointer"},
+    actRow:{display:"flex",alignItems:"flex-start",gap:11,padding:"11px 0",borderBottom:"1px solid #f3f4f6"},
+    actBadge:{width:34,height:34,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:"#fff",flexShrink:0,marginTop:2},
+    sectionTitle:{fontWeight:800,fontSize:19,marginBottom:16,color:"#111827"},
+    nameRow:{display:"flex",alignItems:"center",marginBottom:11},
+  };
+
+  return(
+    <div style={S.root}>
+      <div style={S.topbar}>
+        <span style={S.logo}>💼 Mis Cuentas</span>
+        <div style={S.navBtns}>
+          {[["dashboard","🏠"],["activities","📅"],["monthly","📊"],["names","✏️"]].map(([v,label])=>(
+            <button key={v} style={view===v?S.navActive:S.navBtn} onClick={()=>{if(v==="names")setEditNames(accounts.map(a=>a.name));setView(v);}}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      {saveStatus&&<div style={{background:"#0e9f6e",color:"#fff",textAlign:"center",padding:"5px",fontSize:12,fontWeight:600}}>{saveStatus}</div>}
+      {msg&&<div style={{...S.toast,background:msg.type==="ok"?"#0e9f6e":"#e02424"}}>{msg.text}</div>}
+
+      {view==="dashboard"&&(
+        <div style={S.content}>
+          <div style={S.totalCard}>
+            <div style={S.totalLabel}>Saldo Total</div>
+            <div style={S.totalAmount}>{fmt(totalBalance)}</div>
+            <button onClick={()=>exportToExcel(accounts,activities)} style={{marginTop:12,background:"#166534",color:"#fff",border:"none",borderRadius:8,padding:"8px 20px",fontWeight:700,fontSize:13,cursor:"pointer"}}>📊 Exportar Excel</button>
+          </div>
+          <div style={S.grid}>
+            {accounts.map((acc,i)=>(
+              <div key={acc.id} style={{...S.card,borderTop:`4px solid ${acc.color}`,cursor:"pointer"}} onClick={()=>{setSelected(i);setView("detail");}}>
+                <div style={{fontSize:26}}>{acc.icon}</div>
+                <div style={S.cardName}>{acc.name}</div>
+                <div style={{...S.cardBalance,color:acc.color}}>{fmt(acc.balance)}</div>
+                <div style={S.cardTxCount}>{acc.transactions.length} mov.</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {view==="detail"&&selected!==null&&(
+        <div style={S.content}>
+          <button style={S.backBtn} onClick={()=>setView("dashboard")}>← Regresar</button>
+          <div style={{...S.detailHeader,borderLeft:`6px solid ${accounts[selected].color}`}}>
+            <span style={{fontSize:34}}>{accounts[selected].icon}</span>
+            <div><div style={S.detailName}>{accounts[selected].name}</div><div style={{...S.detailBalance,color:accounts[selected].color}}>{fmt(accounts[selected].balance)}</div></div>
+          </div>
+          <div style={S.formBox}>
+            <div style={S.typeRow}>
+              {["deposito","retiro"].map(t=>(
+                <button key={t} style={{...S.typeBtn,background:form.type===t?(t==="deposito"?"#0e9f6e":"#e02424"):"#f3f4f6",color:form.type===t?"#fff":"#374151"}} onClick={()=>setForm(f=>({...f,type:t}))}>
+                  {t==="deposito"?"⬆ Depósito":"⬇ Retiro"}
+                </button>
+              ))}
+            </div>
+            <input style={S.input} type="number" placeholder="Monto ($)" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))}/>
+            <input style={S.input} placeholder="Nota (opcional)" value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))}/>
+            <button style={{...S.submitBtn,background:accounts[selected].color}} onClick={handleTransaction}>Registrar {form.type==="deposito"?"Depósito":"Retiro"}</button>
+          </div>
+          <div style={S.txList}>
+            <div style={S.txTitle}>Historial</div>
+            {accounts[selected].transactions.length===0&&<div style={S.emptyTx}>Sin movimientos aún.</div>}
+            {accounts[selected].transactions.map(tx=>(
+              <div key={tx.id} style={S.txRow}>
+                <div style={S.txLeft}>
+                  <span style={{fontSize:18}}>{tx.type==="deposito"?"⬆":"⬇"}</span>
+                  <div>
+                    <div style={{fontWeight:600,fontSize:13,color:tx.type==="deposito"?"#0e9f6e":"#e02424"}}>{tx.type==="deposito"?"+":"-"}{fmt(tx.amount)}</div>
+                    <div style={S.txNote}>{tx.note||"Sin nota"}</div>
+                    <div style={S.txDate}>{tx.date}</div>
+                  </div>
+                </div>
+                <div style={S.txRight}>
+                  <div style={{fontSize:11,color:"#6b7280"}}>Saldo: {fmt(tx.balanceAfter)}</div>
+                  <button style={S.delBtn} onClick={()=>deleteTransaction(selected,tx.id)}>🗑</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {view==="activities"&&(
+        <div style={S.content}>
+          <div style={S.sectionTitle}>📅 Actividades Diarias</div>
+          <div style={S.formBox}>
+            <div style={{fontWeight:700,fontSize:14,color:"#374151"}}>Nueva Actividad</div>
+            <div style={{display:"flex",gap:7}}>
+              {["deposito","retiro","transferencia"].map(t=>(
+                <button key={t} style={{...S.typeBtn,flex:1,fontSize:11,padding:"9px 2px",background:actForm.type===t?typeColor[t]:"#f3f4f6",color:actForm.type===t?"#fff":"#374151"}} onClick={()=>setActForm(f=>({...f,type:t}))}>
+                  {typeIcon[t]} {typeLabel[t]}
+                </button>
+              ))}
+            </div>
+            <input style={S.input} placeholder="Descripción *" value={actForm.description} onChange={e=>setActForm(f=>({...f,description:e.target.value}))}/>
+            <input style={S.input} type="number" placeholder="Monto ($) *" value={actForm.amount} onChange={e=>setActForm(f=>({...f,amount:e.target.value}))}/>
+            {(actForm.type==="retiro"||actForm.type==="transferencia")&&(
+              <div><label style={S.label}>💸 Sale de</label>
+                <select style={S.select} value={actForm.fromBank} onChange={e=>setActForm(f=>({...f,fromBank:e.target.value}))}>
+                  <option value="">— Selecciona cuenta —</option>
+                  {accounts.map((acc,i)=><option key={i} value={i}>{acc.icon} {acc.name} · {fmt(acc.balance)}</option>)}
+                </select>
+              </div>
+            )}
+            {(actForm.type==="deposito"||actForm.type==="transferencia")&&(
+              <div><label style={S.label}>🏦 Entra a</label>
+                <select style={S.select} value={actForm.toBank} onChange={e=>setActForm(f=>({...f,toBank:e.target.value}))}>
+                  <option value="">— Selecciona cuenta —</option>
+                  {accounts.map((acc,i)=><option key={i} value={i}>{acc.icon} {acc.name} · {fmt(acc.balance)}</option>)}
+                </select>
+              </div>
+            )}
+            {actForm.type==="transferencia"&&(
+              <div><label style={S.label}>🏦 Comisión (va a Comisiones)</label>
+                <input style={S.input} type="number" placeholder="Comisión $ (opcional)" value={actForm.commission} onChange={e=>setActForm(f=>({...f,commission:e.target.value}))}/>
+              </div>
+            )}
+            <div><label style={S.label}>📆 Fecha</label>
+              <input style={S.input} type="date" value={actForm.date} onChange={e=>setActForm(f=>({...f,date:e.target.value}))}/>
+            </div>
+            <input style={S.input} placeholder="Nota adicional (opcional)" value={actForm.note} onChange={e=>setActForm(f=>({...f,note:e.target.value}))}/>
+            <button style={{...S.submitBtn,background:typeColor[actForm.type]}} onClick={handleActivity}>{typeIcon[actForm.type]} Registrar {typeLabel[actForm.type]}</button>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+            <span style={{fontWeight:700,fontSize:14,color:"#374151"}}>Historial</span>
+            <input style={{...S.input,width:"auto",fontSize:13,padding:"6px 10px"}} type="date" value={filterDate} onChange={e=>setFilterDate(e.target.value)}/>
+            {filterDate&&<button style={{fontSize:12,color:"#6b7280",background:"none",border:"none",cursor:"pointer"}} onClick={()=>setFilterDate("")}>Ver todo</button>}
+          </div>
+          <div style={S.txList}>
+            {filteredActivities.length===0&&<div style={S.emptyTx}>Sin actividades{filterDate?" para esta fecha":""}.</div>}
+            {filteredActivities.map(act=>(
+              <div key={act.id} style={S.actRow}>
+                <div style={{...S.actBadge,background:typeColor[act.type]}}>{typeIcon[act.type]}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:700,fontSize:14}}>{act.description}</div>
+                  <div style={{fontSize:14,fontWeight:700,color:typeColor[act.type],margin:"2px 0"}}>{fmt(act.amount)}</div>
+                  <div style={{fontSize:12,color:"#6b7280",display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
+                    {act.fromBank!=null&&<span style={{background:"#fee2e2",color:"#b91c1c",borderRadius:5,padding:"1px 7px"}}>💸 {accounts[act.fromBank]?.icon} {accounts[act.fromBank]?.name}</span>}
+                    {act.fromBank!=null&&act.toBank!=null&&<span style={{color:"#9ca3af"}}>→</span>}
+                    {act.toBank!=null&&<span style={{background:"#dcfce7",color:"#166534",borderRadius:5,padding:"1px 7px"}}>🏦 {accounts[act.toBank]?.icon} {accounts[act.toBank]?.name}</span>}
+                  </div>
+                  {act.note&&<div style={{fontSize:11,color:"#9ca3af",marginTop:2}}>{act.note}</div>}
+                  <div style={{fontSize:11,color:"#9ca3af",marginTop:2}}>{act.date} · {act.createdAt}</div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"flex-end"}}>
+                  <button style={S.printBtn} onClick={()=>printReceipt(act)}>🖨️</button>
+                  <button style={S.delBtn} onClick={()=>deleteActivity(act.id)}>🗑</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {view==="monthly"&&(()=>{
+        const mN=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+        const years=Array.from(new Set(activities.map(a=>new Date(a.date+"T00:00:00").getFullYear()))).sort((a,b)=>b-a);
+        if(!years.includes(selYear))years.unshift(selYear);
+        const mA=activities.filter(a=>{const d=new Date(a.date+"T00:00:00");return d.getFullYear()===selYear&&d.getMonth()===selMonth;});
+        const tD=mA.filter(a=>a.type==="deposito").reduce((s,a)=>s+a.amount,0);
+        const tR=mA.filter(a=>a.type==="retiro").reduce((s,a)=>s+a.amount,0);
+        const tT=mA.filter(a=>a.type==="transferencia").reduce((s,a)=>s+a.amount,0);
+        const neto=tD-tR;
+        const byAcc=accounts.map((acc,i)=>{
+          const d=mA.filter(a=>a.toBank===i&&a.type==="deposito").reduce((s,a)=>s+a.amount,0);
+          const r=mA.filter(a=>a.fromBank===i&&a.type==="retiro").reduce((s,a)=>s+a.amount,0);
+          const to=mA.filter(a=>a.fromBank===i&&a.type==="transferencia").reduce((s,a)=>s+a.amount,0);
+          const ti=mA.filter(a=>a.toBank===i&&a.type==="transferencia").reduce((s,a)=>s+a.amount,0);
+          return{...acc,d,r,to,ti,m:d+r+to+ti};
+        }).filter(a=>a.m>0);
+        return(
+          <div style={S.content}>
+            <div style={S.sectionTitle}>📊 Resumen Mensual</div>
+            <div style={{display:"flex",gap:10,marginBottom:18,flexWrap:"wrap"}}>
+              <select style={{...S.select,width:"auto",fontWeight:700}} value={selMonth} onChange={e=>setSelMonth(parseInt(e.target.value))}>{mN.map((m,i)=><option key={i} value={i}>{m}</option>)}</select>
+              <select style={{...S.select,width:"auto",fontWeight:700}} value={selYear} onChange={e=>setSelYear(parseInt(e.target.value))}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select>
+            </div>
+            {mA.length===0?(<div style={{background:"#fff",borderRadius:13,padding:"40px 20px",textAlign:"center",color:"#9ca3af"}}>Sin actividades en {mN[selMonth]} {selYear}.</div>):(<>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:11,marginBottom:16}}>
+                {[{label:"Depósitos",value:fmt(tD),color:"#0e9f6e",icon:"⬆"},{label:"Retiros",value:fmt(tR),color:"#e02424",icon:"⬇"},{label:"Transferencias",value:fmt(tT),color:"#7e3af2",icon:"↔"},{label:"Flujo Neto",value:fmt(neto),color:neto>=0?"#0e9f6e":"#e02424",icon:neto>=0?"📈":"📉"},{label:"Actividades",value:mA.length,color:"#1a56db",icon:"📋"}].map((c,i)=>(
+                  <div key={i} style={{background:"#fff",borderRadius:13,padding:"14px 13px",boxShadow:"0 1px 5px rgba(0,0,0,0.07)",borderTop:`4px solid ${c.color}`}}>
+                    <div style={{fontSize:22,marginBottom:4}}>{c.icon}</div>
+                    <div style={{fontSize:11,color:"#6b7280",marginBottom:4}}>{c.label}</div>
+                    <div style={{fontSize:16,fontWeight:800,color:c.color}}>{c.value}</div>
+                  </div>
+                ))}
+              </div>
+              {byAcc.length>0&&(<div style={{background:"#fff",borderRadius:13,padding:"16px",marginBottom:16,boxShadow:"0 1px 5px rgba(0,0,0,0.07)"}}>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:12,color:"#374151"}}>Actividad por Cuenta</div>
+                {byAcc.map((acc,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid #f3f4f6"}}>
+                    <span style={{fontSize:20}}>{acc.icon}</span>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontWeight:700,fontSize:13}}>{acc.name}</div>
+                      <div style={{fontSize:11,color:"#6b7280",marginTop:2,display:"flex",gap:8,flexWrap:"wrap"}}>
+                        {acc.d>0&&<span style={{color:"#0e9f6e"}}>⬆ {fmt(acc.d)}</span>}
+                        {acc.r>0&&<span style={{color:"#e02424"}}>⬇ {fmt(acc.r)}</span>}
+                        {acc.ti>0&&<span style={{color:"#7e3af2"}}>↙ {fmt(acc.ti)}</span>}
+                        {acc.to>0&&<span style={{color:"#7e3af2"}}>↗ {fmt(acc.to)}</span>}
+                      </div>
+                    </div>
+                    <div style={{fontWeight:700,fontSize:13,color:acc.color}}>{fmt(acc.balance)}</div>
+                  </div>
+                ))}
+              </div>)}
+              <div style={{background:"#fff",borderRadius:13,padding:"15px 16px",boxShadow:"0 1px 5px rgba(0,0,0,0.07)"}}>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:11,color:"#374151"}}>Todas las actividades ({mA.length})</div>
+                {mA.map(act=>(
+                  <div key={act.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid #f3f4f6"}}>
+                    <div style={{...S.actBadge,background:typeColor[act.type],width:28,height:28,fontSize:13}}>{typeIcon[act.type]}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontWeight:600,fontSize:13}}>{act.description}</div>
+                      <div style={{fontSize:11,color:"#9ca3af"}}>{act.date}</div>
+                    </div>
+                    <div style={{fontWeight:700,fontSize:13,color:typeColor[act.type]}}>{fmt(act.amount)}</div>
+                  </div>
+                ))}
+              </div>
+            </>)}
+          </div>
+        );
+      })()}
+
+      {view==="names"&&(
+        <div style={S.content}>
+          <div style={S.sectionTitle}>Personalizar Nombres</div>
+          {accounts.map((acc,i)=>(
+            <div key={acc.id} style={S.nameRow}>
+              <span style={{fontSize:20,marginRight:9}}>{acc.icon}</span>
+              <input style={{...S.input,flex:1}} value={editNames[i]} onChange={e=>{const n=[...editNames];n[i]=e.target.value;setEditNames(n);}}/>
+            </div>
+          ))}
+          <button style={{...S.submitBtn,background:"#1a56db"}} onClick={saveNames}>Guardar Nombres</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
